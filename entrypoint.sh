@@ -25,7 +25,7 @@ fi
 
 # execute init scripts, if any
 if [ -d '/init_scripts' ]; then
-    for f in "/init_scripts/*.sh"; do
+    for f in /init_scripts/*.sh; do
         echo "Executing "$f
         /usr/bin/env sh $f
     done
