@@ -23,6 +23,14 @@ else
     echo "node_modules found, skip initialization..."
 fi
 
+# execute init scripts, if any
+if [ -d '/init_scripts' ]; then
+    for f in "/init_scripts/*.sh"; do
+        echo "Executing "$f
+        /usr/bin/env sh $f
+    done
+fi
+
 # run as user n8n
 echo "Running n8n..."
 exec su n8n -c "/home/n8n/node_modules/n8n/bin/n8n"
