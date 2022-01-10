@@ -4,7 +4,8 @@ FROM node:14-alpine as builder
 ARG VERSION
 
 WORKDIR /root
-RUN apk add --update-cache make g++ python \
+RUN apk add --update-cache make g++ python3 \
+    && ln -sf python3 /usr/bin/python \
     && npm install full-icu n8n@${VERSION}
 
 FROM node:14-alpine
