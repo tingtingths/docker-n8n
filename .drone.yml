@@ -108,6 +108,9 @@ steps:
         from_secret: telegram_notification_receiver
       format: markdown
 
+depends_on:
+  - package-with-manifest
+
 trigger:
   event:
   - tag
