@@ -16,19 +16,14 @@ steps:
         from_secret: docker_password
       registry: registry.itdog.me
       repo: registry.itdog.me/ting/docker-n8n
+      build_args:
+        - VERSION=${DRONE_TAG}
       tags:
-        - ${N8N_VERSION}-${DRONE_STAGE_ARCH}
+        - ${DRONE_TAG}-${DRONE_STAGE_ARCH}
 
 trigger:
   event:
-    exclude:
-    - cron
-    - custom
-    - push
-    - pull_request
-    - tag
-    - promote
-    - rollback
+  - tag
 
 ---
 kind: pipeline
@@ -49,19 +44,14 @@ steps:
         from_secret: docker_password
       registry: registry.itdog.me
       repo: registry.itdog.me/ting/docker-n8n
+      build_args:
+        - VERSION=${DRONE_TAG}
       tags:
-        - ${N8N_VERSION}-${DRONE_STAGE_ARCH}
+        - ${DRONE_TAG}-${DRONE_STAGE_ARCH}
 
 trigger:
   event:
-    exclude:
-    - cron
-    - custom
-    - push
-    - pull_request
-    - tag
-    - promote
-    - rollback
+  - tag
 
 ---
 kind: pipeline
@@ -76,8 +66,8 @@ steps:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      target: registry.itdog.me/ting/docker-n8n:${N8N_VERSION:=none}
-      template: registry.itdog.me/ting/docker-n8n:${N8N_VERSION:=none}-ARCH
+      target: registry.itdog.me/ting/docker-n8n:${DRONE_TAG:=none}
+      template: registry.itdog.me/ting/docker-n8n:${DRONE_TAG:=none}-ARCH
       platforms:
         - linux/amd64
         - linux/arm64
@@ -90,7 +80,7 @@ steps:
       password:
         from_secret: docker_password
       target: registry.itdog.me/ting/docker-n8n:latest
-      template: registry.itdog.me/ting/docker-n8n:${N8N_VERSION:=none}-ARCH
+      template: registry.itdog.me/ting/docker-n8n:${DRONE_TAG:=none}-ARCH
       platforms:
         - linux/amd64
         - linux/arm64
@@ -101,14 +91,7 @@ depends_on:
 
 trigger:
   event:
-    exclude:
-    - cron
-    - custom
-    - push
-    - pull_request
-    - tag
-    - promote
-    - rollback
+  - tag
 
 ---
 kind: pipeline
@@ -127,11 +110,4 @@ steps:
 
 trigger:
   event:
-    exclude:
-    - cron
-    - custom
-    - push
-    - pull_request
-    - tag
-    - promote
-    - rollback
+  - tag
