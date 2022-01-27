@@ -1,0 +1,137 @@
+kind: pipeline
+type: docker
+name: build-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+  - name: build-by-tag
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      registry: registry.itdog.me
+      repo: registry.itdog.me/ting/docker-n8n
+      tags:
+        - ${N8N_VERSION}-${DRONE_STAGE_ARCH}
+
+trigger:
+  event:
+    exclude:
+    - cron
+    - custom
+    - push
+    - pull_request
+    - tag
+    - promote
+    - rollback
+
+---
+kind: pipeline
+type: docker
+name: build-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: build-by-tag
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      registry: registry.itdog.me
+      repo: registry.itdog.me/ting/docker-n8n
+      tags:
+        - ${N8N_VERSION}-${DRONE_STAGE_ARCH}
+
+trigger:
+  event:
+    exclude:
+    - cron
+    - custom
+    - push
+    - pull_request
+    - tag
+    - promote
+    - rollback
+
+---
+kind: pipeline
+type: docker
+name: package-with-manifest
+
+steps:
+  - name: manifest-by-tag
+    image: plugins/manifest
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      target: registry.itdog.me/ting/docker-n8n:${N8N_VERSION:=none}
+      template: registry.itdog.me/ting/docker-n8n:${N8N_VERSION:=none}-ARCH
+      platforms:
+        - linux/amd64
+        - linux/arm64
+
+  - name: manifest-by-tag-latest
+    image: plugins/manifest
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      target: registry.itdog.me/ting/docker-n8n:latest
+      template: registry.itdog.me/ting/docker-n8n:${N8N_VERSION:=none}-ARCH
+      platforms:
+        - linux/amd64
+        - linux/arm64
+
+depends_on:
+  - build-amd64
+  - build-arm64
+
+trigger:
+  event:
+    exclude:
+    - cron
+    - custom
+    - push
+    - pull_request
+    - tag
+    - promote
+    - rollback
+
+---
+kind: pipeline
+type: docker
+name: notification
+
+steps:
+  - name: telegram-notification
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: telegram_notification_bot_token
+      to:
+        from_secret: telegram_notification_receiver
+      format: markdown
+
+trigger:
+  event:
+    exclude:
+    - cron
+    - custom
+    - push
+    - pull_request
+    - tag
+    - promote
+    - rollback
