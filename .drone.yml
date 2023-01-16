@@ -1,31 +1,31 @@
-kind: pipeline
-type: docker
-name: build-arm64
+# kind: pipeline
+# type: docker
+# name: build-arm64
 
-platform:
-  os: linux
-  arch: arm64
+# platform:
+#   os: linux
+#   arch: arm64
 
-steps:
-  - name: build-by-tag
-    image: plugins/docker
-    settings:
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      registry: registry.itdog.me
-      repo: registry.itdog.me/ting/docker-n8n
-      build_args:
-        - VERSION=${DRONE_TAG}
-      tags:
-        - ${DRONE_TAG}-${DRONE_STAGE_ARCH}
+# steps:
+#   - name: build-by-tag
+#     image: plugins/docker
+#     settings:
+#       username:
+#         from_secret: docker_username
+#       password:
+#         from_secret: docker_password
+#       registry: registry.itdog.me
+#       repo: registry.itdog.me/ting/docker-n8n
+#       build_args:
+#         - VERSION=${DRONE_TAG}
+#       tags:
+#         - ${DRONE_TAG}-${DRONE_STAGE_ARCH}
 
-trigger:
-  event:
-  - tag
+# trigger:
+#   event:
+#   - tag
 
----
+# ---
 kind: pipeline
 type: docker
 name: build-amd64
@@ -70,7 +70,7 @@ steps:
       template: registry.itdog.me/ting/docker-n8n:${DRONE_TAG:=none}-ARCH
       platforms:
         - linux/amd64
-        - linux/arm64
+        # - linux/arm64
 
   - name: manifest-by-tag-latest
     image: plugins/manifest
@@ -83,11 +83,11 @@ steps:
       template: registry.itdog.me/ting/docker-n8n:${DRONE_TAG:=none}-ARCH
       platforms:
         - linux/amd64
-        - linux/arm64
+        # - linux/arm64
 
 depends_on:
   - build-amd64
-  - build-arm64
+  # - build-arm64
 
 trigger:
   event:
